@@ -1,3 +1,5 @@
+var topics = [];
+
 
 
 if (!String.format) {
@@ -12,57 +14,65 @@ if (!String.format) {
   };
 }
 
-
 function add_search_results(data)
 {
+    Plotly.purge('topics_wrapper');
+
     table = $('#search_table').DataTable();
 
     table.clear();
+    topics = [];
 
     for(idx in data)
     {
-        console.log(idx);
+        person = data[idx];
 
-        paragraph = data[idx];
-
-        console.log(typeof(paragraph));
-        console.log(paragraph);
-        console.log(paragraph['text']);
+        topics.push(person['topics']);
 
         table.row.add({
                         'Information': {
-                                        'text': paragraph['text'],
-                                        'indices': paragraph['indices']
-                                        }
-                      }).draw()
+                                        'text': person['first_name'] + ' ' + person['last_name'], 
+                                        'uid':person['uid'], 
+                                        'city':person['city'], 
+                                        'age':person['age'], 
+                                        'sex':person['sex']
+                                        },                        
+                        'Photo': {'photo':person['photo']},
+                        'Score': person['score'], 
+                    }).draw()
     }    
 }
 
+function plot_topics(idx)
+{
+    topics_dist = topics[idx];
+    topics_names = []
 
-function process_text(data) {
-    var text = data['text'];
-    var indices = data['indices'];
-
-    var left = "<span class='highlight'>";
-    var right = "</span>";
-
-    var offset = (left + right).length;
-    var cur_offset = 0;
-    var start = 0;
-    var end = 0;
-
-    for (pair in indices) {
-        start = indices[pair][0];
-        end = indices[pair][1];
-        start += cur_offset;
-        end += cur_offset;
-        text = text.slice(0, start) + left + text.slice(start, end) + right + text.slice(end);
-        cur_offset += offset;
+    for(tidx in topics_dist)
+    {
+        topics_names.push('Topic #' + tidx);
     }
 
-        return text
-}
+    var data = [{
+      type: 'bar',
+      x: topics_dist,
+      y: topics_names,
+      orientation: 'h'
+    }];
 
+    var layout = {
+                    title: 'Topics',
+                    font: { size: 16 },
+                    margin: {
+                        t: 30, //top margin
+                        l: 70, //left margin
+                        r: 20, //right margin
+                        b: 20 //bottom margin
+                    }  
+                  }
+
+    Plotly.newPlot('topics_wrapper', data, layout,  {staticPlot:true});
+}
 
 $(document).ready(function() {
   $('#search_table').DataTable( {
@@ -71,22 +81,43 @@ $(document).ready(function() {
       "bInfo": false,
       "lengthChange": false,
       "columns": [
+                    {"data" : "Score"},
                     {
+                        "data" : "Photo",
+                        "render": function(data, type, row, meta){
+                            return '<img height="100px" src="'+ data['photo'] +'"/>';
+                        }
+                    },
+                    { 
                        "data": "Information",
                        "render": function(data, type, row, meta)
-                       {
-                           return process_text(data)
+                       {                            
+                            txt = '<a href="https://vk.com/id' + data['uid'] + '">' + data['text'] + '</a>\n';
+                            txt += String.format('Gender: {0}\n', data['sex']);
+                            txt += String.format('City: {0}\n', data['city']);
+                            txt += String.format('Age: {0}\n', data['age']);
+                      
+                            return txt;
                        }
-
-                    }
+                    },
+                    { 
+                        "data": "Feedback",
+                        "render": function(data, type, row, meta){
+                            return '<img height="25px" src="static/smiles_2.png"/>';
+                        }}
                  ]
+  });
+
+  $('#search_table').on('click', 'tbody tr', function(event) {
+      $(this).addClass('highlight').siblings().removeClass('highlight')
+      plot_topics($(this).index());
   });
 });
 
-
-function process_query() {
+$("#query_submit_btn").on("click", function () 
+{
     var value = $('#query_text').val();
-
+    
     if(value.length == 0)
     {
         alert("The query is empty!");
@@ -96,7 +127,7 @@ function process_query() {
     $.ajax({
       type: 'GET',
       url: '/process_query',
-      data: {text: value},
+      data: {'text': value, 'gender':1, 'city':2},
       contentType: 'application/json',
       success: function(data)
       {
@@ -106,28 +137,9 @@ function process_query() {
             }
             add_search_results(JSON.parse(data))
       },
-      error: function(XMLHttpRequest, textStatus, errorThrown)
-      {
-        alert("Status: " + textStatus); alert("Error: " + errorThrown);
-      }
+      error: function(XMLHttpRequest, textStatus, errorThrown) 
+      { 
+        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+      }  
     });
-}
-
-
-$("#query_submit_btn").click(function ()
-    {
-        process_query()
-    }
-);
-
-
-$("#query_text").on("keyup", function (e)
-    {
-        var key = e.which;
-        if (key != 13) {
-            return;
-        }
-
-        process_query()
-    }
-)
+})

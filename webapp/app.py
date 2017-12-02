@@ -1,14 +1,40 @@
+import sys
+sys.path.insert(0,'..')
+
 import numpy as np
+
 from collections import defaultdict
+
 from flask_socketio import SocketIO
 from flask import Flask, render_template, make_response, request, Response
+
+from pymongo import MongoClient
+
 import json
+
 import configparser
-import random
-from collections import OrderedDict
+
+from search import SearchEngine
+
+app = Flask('Finding friends app')
+client = MongoClient()
+db = client.ir_project
+
+eng = SearchEngine(db)
 
 
-app = Flask('Make StackOverflow Great Again!')
+city_map = defaultdict(lambda: 'Unknown',
+                        {   
+                            1: 'Saint-Petersburg',
+                            2: 'Moscow',
+                            169: 'Yaroslavl'
+                        })
+
+gender_map = defaultdict(lambda: 'Unknown',
+                        {   
+                            1: 'Female',
+                            2: 'Male',
+                        })
 
 
 @app.route('/')
@@ -16,42 +42,42 @@ def hello_world():
     return render_template('index.html')
 
 
-def get_paragraphs(q):
-    mock = {'first:': {'text': 'mother was washing window frame',
-                       'indices': ((0, 6), (19, 25))
-                       },
-            'second': {'text': 'mother was washing window frame 2',
-                       'indices': ((7, 10), (11, 18))
-                       },
-            'third': {'text': 'mother was asdgasad  window frame 2',
-                      'indices': ((7, 10), (11, 18))
-                       },
-            'fourth': {'text': 'mother was waag e window frame 2',
-                       'indices': ((7, 10), (11, 18))
-                       },
-            'fifth': {'text': 'asdg agasgd mother was washing window frame 2',
-                      'indices': ((7, 10), (11, 18))
-                      }
-            }
+def get_topics(ids):
+    return {u['uid']:u['topics'] for u in db.topics.find({"uid": {"$in": ids}})}
 
-    keys = list(mock.keys())
-    random.shuffle(keys)
 
-    keys = random.sample(keys, 3)
+def get_users(text, filters, count=30):
+    search_res = {uid:score for uid,score in eng.search('BM25', 'search', text, 20, 1, (18, 25), 1)}
 
-    result = OrderedDict()
+    res = [u for u in db.users.find({'uid': {'$in': list(search_res.keys())}})]
 
-    for key in keys:
-        result[key] = mock[key]
+    photos = defaultdict(lambda: 'https://vk.com/images/camera_200.png',
+                            {u['uid']:u['photo_max_orig'] for u in db.user_info.find({"uid": {"$in": [r['uid'] for r in res]}})}) 
+    topics = defaultdict(lambda: np.zeros(25).tolist(), get_topics([r['uid'] for r in res]))
 
-    return result
+
+    for r in res:
+        r['photo'] = photos[r['uid']]
+        # r['sex'] = gender_map[r['sex']]
+        # r['city'] = city_map[r['city']]
+        r['sex'] = 'Female'
+        r['city'] = 'Saint-Petersburg'
+        r['topics'] = topics[r['uid']]
+        r['score'] = search_res[r['uid']]
+
+        del r['_id']
+
+    return sorted(res, key=lambda r: r['score'], reverse=False)
 
 
 @app.route('/process_query', methods=['POST', 'GET'])
 def process_query():
     q = request.args.get("text")
-    result = get_paragraphs(q)
-    return json.dumps(result)
+    f = request.args
+
+    res = get_users(q, f)
+
+    return json.dumps(res)
 
 
 def start_app(config):
@@ -61,8 +87,8 @@ def start_app(config):
     socketio = SocketIO(app)
     socketio.run(app)
 
-
 if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.read('config.ini')
+
     start_app(config)
