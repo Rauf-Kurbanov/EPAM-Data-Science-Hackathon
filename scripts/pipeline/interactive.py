@@ -30,7 +30,7 @@ parser.add_argument('--retriever-model', type=str, default=None,
                     help='Path to Document Retriever model (tfidf)')
 parser.add_argument('--doc-db', type=str, default=None,
                     help='Path to Document DB')
-parser.add_argument('--tokenizer', type=str, default=None,
+parser.add_argument('--tokenizer', type=str, default='spacy',
                     help=("String option specifying tokenizer type to "
                           "use (e.g. 'corenlp')"))
 parser.add_argument('--candidate-file', type=str, default=None,
@@ -67,7 +67,7 @@ DrQA = pipeline.DrQA(
     reader_model=args.reader_model,
     ranker_config={'options': {'tfidf_path': args.retriever_model}},
     db_config={'options': {'db_path': args.doc_db}},
-    tokenizer=args.tokenizer
+    tokenizer='spacy' #args.tokenizer
 )
 
 
@@ -112,4 +112,4 @@ def usage():
     print(banner)
 
 
-code.interact(banner=banner, local=locals())
+# code.interact(banner=banner, local=locals())

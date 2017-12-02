@@ -1,14 +1,63 @@
-import numpy as np
-from collections import defaultdict
+import prettytable
+
 from flask_socketio import SocketIO
 from flask import Flask, render_template, make_response, request, Response
 import json
 import configparser
-import random
 from collections import OrderedDict
+import logging
 
+from drqa import pipeline
 
 app = Flask('Make StackOverflow Great Again!')
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
+console = logging.StreamHandler()
+console.setFormatter(fmt)
+logger.addHandler(console)
+
+logger.info('Initializing pipeline...')
+DrQA = pipeline.DrQA(
+    cuda=True,
+    fixed_candidates=None,
+    reader_model=None,
+    ranker_config={'options': {'tfidf_path': None}},
+    db_config={'options': {'db_path': None}},
+    tokenizer='spacy' #args.tokenizer
+)
+
+
+def process(question, candidates=None, top_n=1, n_docs=5):
+
+    predictions = DrQA.process(
+        question, candidates, top_n, n_docs, return_context=True
+    )
+    table = prettytable.PrettyTable(
+        ['Rank', 'Answer', 'Doc', 'Answer Score', 'Doc Score']
+    )
+    for i, p in enumerate(predictions, 1):
+        table.add_row([i, p['span'], p['doc_id'],
+                       '%.5g' % p['span_score'],
+                       '%.5g' % p['doc_score']])
+    # print('Top Predictions:')
+    # print(table)
+    # print('\nContexts:')
+    dicts = {}
+    for p, name in zip(predictions, ['first', 'second', 'third']):
+        text = p['context']['text']
+        start = p['context']['start']
+        end = p['context']['end']
+        # output = (text[:start] +
+        #           colored(text[start: end], 'green', attrs=['bold']) +
+        #           text[end:])
+        mock =  {'first': text[:start],
+                         'second': text[start: end],
+                         'third': text[end:]}
+        dicts[name] = mock
+
+    return dicts
 
 
 @app.route('/')
@@ -17,24 +66,10 @@ def hello_world():
 
 
 def get_paragraphs(q):
-    mock = {'first': {'first': 'mother was washing window frame ',
-                       'second': 'blablabla',
-                       'third': ' bye bye'
-                       },
-            'second': {'first': 'mother ',
-                       'second': 'was',
-                       'third': ' washing window frame'
-                       },
-            'third': {'first': 'mother was  ',
-                       'second': 'washing',
-                       'third': ' window frame'
-                       }
-            }
+    mock = process(q, top_n=3)
+    print(mock)
 
     result = OrderedDict()
-
-    for i in range(100):
-        mock[str(i)] = mock['first']
 
     for key in mock:
         result[key] = mock[key]

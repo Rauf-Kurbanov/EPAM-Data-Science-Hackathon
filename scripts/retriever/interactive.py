@@ -11,6 +11,7 @@ import code
 import prettytable
 import logging
 from drqa import retriever
+import requests
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -32,14 +33,17 @@ ranker = retriever.get_class('tfidf')(tfidf_path=args.model)
 # ------------------------------------------------------------------------------
 
 
-def process(query, k=1):
+def process(query, k=3):
     doc_names, doc_scores = ranker.closest_docs(query, k)
     table = prettytable.PrettyTable(
         ['Rank', 'Doc Id', 'Doc Score']
     )
     for i in range(len(doc_names)):
         table.add_row([i + 1, doc_names[i], '%.5g' % doc_scores[i]])
-    print(table)
+    return table
+
+    # r = requests.post("http://127.0.0.1:5000/", data={'text': table})
+    # print(r.status_code, r.reason)
 
 
 banner = """
@@ -53,4 +57,4 @@ def usage():
     print(banner)
 
 
-code.interact(banner=banner, local=locals())
+# code.interact(banner=banner, local=locals())

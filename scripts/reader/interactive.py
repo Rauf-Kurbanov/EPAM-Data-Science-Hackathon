@@ -81,4 +81,4 @@ def usage():
     print(banner)
 
 
-code.interact(banner=banner, local=locals())
+# code.interact(banner=banner, local=locals())
