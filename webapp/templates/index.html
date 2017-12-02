@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Make StackOverFlow great again!</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+
+    <link rel="stylesheet" href="/static/css/switch.css">
+    <link rel="stylesheet" href="/static/css/styles.css">  
+  </head>
+
+  <body>
+
+    <div class="jumbotron vertical-center" id="logo_div">
+      <div class="container-fluid" id="header">
+      </div>
+    </div>
+
+    <div id="global_div">
+      <div class="container" id = "query_container">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search query or user link" id="query_text">
+          <div class="input-group-btn">
+            <button class="btn btn-default" id="query_submit_btn">
+              <i class="glyphicon glyphicon-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="search_div" style="display:none" class="row">
+        <table id="search_table" class="table" cellspacing="1" cellpadding="1" border="0" width="70%">
+          <thead>
+              <tr>
+                  <th>Answers</th>
+                  <!--<th>Photo</th>-->
+                  <!--<th>Information</th>-->
+                  <!--<th>Feedback</th>-->
+              </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+
+
+
+    <footer>
+      <p id="footer_text">&copy; Data Science Hackathon</p>
+    </footer>
+
+    <!-- libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+
+    <!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="/static/js/socket.io.min.js"></script>
+    <script src="/static/js/utility.js"></script>
+    
+  </body>
+</html>

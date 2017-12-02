@@ -1,0 +1,78 @@
+#logo_div {
+  background: #fff url("dataset-original.jpg") no-repeat center center;
+  background-size: auto 100%;
+}
+
+#topics_wrapper {
+    min-height:100%;
+    height:100%
+}
+
+#footer_text {
+	text-align: right;
+	margin-right: 5%;
+}
+
+#global_div
+{
+	margin-auto;
+}
+
+#search_div 
+{
+	margin: 0 auto;
+}
+
+#table
+{
+	margin: 0 auto;
+}
+
+#search_table
+{
+	margin-top: 30px;
+	margin-left: 15%;
+	margin-right: 2%;
+	max-width: 95%;
+	width: 90%;
+	text-align: justify;
+}
+
+#filter_div
+{
+	margin-top: 10px;
+	margin-bottom: 10px;
+	position: relative;
+    right: 0px;
+}
+
+#query_container
+{
+	margin: auto;
+	position: relative;
+    right: 0px;
+}
+
+#footer_text
+{
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 1rem;
+	background-color: #efefef;
+	text-align: center;
+}
+
+td { white-space:pre }
+
+.table-striped tbody tr.highlight td { 
+	background-color: rgba(80, 200, 180, 0.3); 
+}
+
+
+.highlight
+{
+	background-color:yellow;
+}
+
