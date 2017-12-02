@@ -1,5 +1,3 @@
-var topics = [];
-
 
 
 if (!String.format) {
@@ -14,65 +12,40 @@ if (!String.format) {
   };
 }
 
+
 function add_search_results(data)
 {
-    Plotly.purge('topics_wrapper');
-
     table = $('#search_table').DataTable();
 
     table.clear();
-    topics = [];
 
     for(idx in data)
     {
-        person = data[idx];
-
-        topics.push(person['topics']);
+        paragraph = data[idx];
 
         table.row.add({
                         'Information': {
-                                        'text': person['first_name'] + ' ' + person['last_name'], 
-                                        'uid':person['uid'], 
-                                        'city':person['city'], 
-                                        'age':person['age'], 
-                                        'sex':person['sex']
-                                        },                        
-                        'Photo': {'photo':person['photo']},
-                        'Score': person['score'], 
-                    }).draw()
+                                        'first': paragraph['first'],
+                                        'second': paragraph['second'],
+                                        'third': paragraph['third']
+                                        }
+                      }).draw()
     }    
 }
 
-function plot_topics(idx)
-{
-    topics_dist = topics[idx];
-    topics_names = []
 
-    for(tidx in topics_dist)
-    {
-        topics_names.push('Topic #' + tidx);
-    }
+function process_text(data) {
+    var first = data['first'];
+    var second = data['second'];
+    var third = data['third'];
 
-    var data = [{
-      type: 'bar',
-      x: topics_dist,
-      y: topics_names,
-      orientation: 'h'
-    }];
+    var left = "<span class='highlight'>";
+    var right = "</span>";
 
-    var layout = {
-                    title: 'Topics',
-                    font: { size: 16 },
-                    margin: {
-                        t: 30, //top margin
-                        l: 70, //left margin
-                        r: 20, //right margin
-                        b: 20 //bottom margin
-                    }  
-                  }
-
-    Plotly.newPlot('topics_wrapper', data, layout,  {staticPlot:true});
+    return first + left + second + right + third;
 }
+
+
 
 $(document).ready(function() {
   $('#search_table').DataTable( {
@@ -81,43 +54,22 @@ $(document).ready(function() {
       "bInfo": false,
       "lengthChange": false,
       "columns": [
-                    {"data" : "Score"},
                     {
-                        "data" : "Photo",
-                        "render": function(data, type, row, meta){
-                            return '<img height="100px" src="'+ data['photo'] +'"/>';
-                        }
-                    },
-                    { 
                        "data": "Information",
                        "render": function(data, type, row, meta)
-                       {                            
-                            txt = '<a href="https://vk.com/id' + data['uid'] + '">' + data['text'] + '</a>\n';
-                            txt += String.format('Gender: {0}\n', data['sex']);
-                            txt += String.format('City: {0}\n', data['city']);
-                            txt += String.format('Age: {0}\n', data['age']);
-                      
-                            return txt;
+                       {
+                           return process_text(data)
                        }
-                    },
-                    { 
-                        "data": "Feedback",
-                        "render": function(data, type, row, meta){
-                            return '<img height="25px" src="static/smiles_2.png"/>';
-                        }}
-                 ]
-  });
 
-  $('#search_table').on('click', 'tbody tr', function(event) {
-      $(this).addClass('highlight').siblings().removeClass('highlight')
-      plot_topics($(this).index());
+                    }
+                 ]
   });
 });
 
-$("#query_submit_btn").on("click", function () 
-{
+
+function process_query() {
     var value = $('#query_text').val();
-    
+
     if(value.length == 0)
     {
         alert("The query is empty!");
@@ -127,7 +79,7 @@ $("#query_submit_btn").on("click", function ()
     $.ajax({
       type: 'GET',
       url: '/process_query',
-      data: {'text': value, 'gender':1, 'city':2},
+      data: {text: value},
       contentType: 'application/json',
       success: function(data)
       {
@@ -137,9 +89,28 @@ $("#query_submit_btn").on("click", function ()
             }
             add_search_results(JSON.parse(data))
       },
-      error: function(XMLHttpRequest, textStatus, errorThrown) 
-      { 
-        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-      }  
+      error: function(XMLHttpRequest, textStatus, errorThrown)
+      {
+        alert("Status: " + textStatus); alert("Error: " + errorThrown);
+      }
     });
-})
+}
+
+
+$("#query_submit_btn").click(function ()
+    {
+        process_query()
+    }
+);
+
+
+$("#query_text").on("keyup", function (e)
+    {
+        var key = e.which;
+        if (key != 13) {
+            return;
+        }
+
+        process_query()
+    }
+)
