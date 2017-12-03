@@ -21,13 +21,13 @@ function add_search_results(data)
 
     for(idx in data)
     {
+        console.log(idx);
+        console.log(data[idx]);
         paragraph = data[idx];
 
         table.row.add({
                         'Information': {
-                                        'first': paragraph['first'],
-                                        'second': paragraph['second'],
-                                        'third': paragraph['third']
+                                        'text': paragraph
                                         }
                       }).draw()
     }    
@@ -35,14 +35,15 @@ function add_search_results(data)
 
 
 function process_text(data) {
-    var first = data['first'];
-    var second = data['second'];
-    var third = data['third'];
-
-    var left = "<span class='highlight'>";
-    var right = "</span>";
-
-    return first + left + second + right + third;
+    // var first = data['first'];
+    // var second = data['second'];
+    // var third = data['third'];
+    //
+    // var left = "<span class='highlight'>";
+    // var right = "</span>";
+    //
+    // return first + left + second + right + third;
+    return data['text']
 }
 
 

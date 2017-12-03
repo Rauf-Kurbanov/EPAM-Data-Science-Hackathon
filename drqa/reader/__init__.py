@@ -21,7 +21,7 @@ def set_default(key, value):
     DEFAULTS[key] = value
 
 from .model import DocReader
-from .predictor import Predictor
+from .predictorr import Predictorr
 from . import config
 from . import vector
 from . import data

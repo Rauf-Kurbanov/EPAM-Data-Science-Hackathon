@@ -42,7 +42,7 @@ def tokenize(text):
 # ------------------------------------------------------------------------------
 
 
-class Predictor(object):
+class Predictorr(object):
     """Load a pretrained DocReader model and predict inputs on the fly."""
 
     def __init__(self, model=None, tokenizer=None, normalize=True,

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-import torch
 import argparse
-
-from termcolor import colored
-from drqa.reader import Predictor
-
 import logging
+
+import torch
+from termcolor import colored
+
+from drqa.reader import Predictorr
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
@@ -44,8 +45,8 @@ if args.cuda:
 else:
     logger.info('Running on CPU only.')
 
-predictor = Predictor(args.model, args.tokenizer, num_workers=0,
-                      normalize=False)
+predictor = Predictorr(args.model, args.tokenizer, num_workers=0,
+                       normalize=False)
 if args.cuda:
     predictor.cuda()
 

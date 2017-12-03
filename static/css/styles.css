@@ -1,0 +1,162 @@
+#logo_div {
+  background: #fff url("dataset-original.jpg") no-repeat center center;
+  background-size: auto 100%;
+}
+
+body {
+	font-size: 100%;
+}
+
+code > span {
+	font-size: 20px;
+}
+
+
+
+
+/*div {*/
+	/*width: 200px;*/
+	/*word-break: break-all;*/
+	/*white-space: normal;*/
+/*}*/
+
+/*.pln {*/
+	/*font-size: 250%;*/
+/*}*/
+
+/*.kwd {*/
+	/**/
+/*}*/
+
+#topics_wrapper {
+    min-height:100%;
+    height:100%
+}
+
+#footer_text {
+	text-align: right;
+	margin-right: 5%;
+}
+
+#global_div
+{
+	margin-auto;
+}
+
+#search_div 
+{
+	margin: 0 auto;
+}
+
+#table
+{
+	margin: 0 auto;
+}
+
+
+table {
+	table-layout:fixed;
+	min-width: 160px;
+	max-width: 700px;
+}
+
+/*td {*/
+	/*word-wrap: break-word;*/
+	/*min-width: 160px;*/
+	/*max-width: 300px;*/
+/*}*/
+
+p {
+	font-size: 20px;
+	word-wrap: break-word;
+	/*min-width: 160px;*/
+	/*max-width: 200px;*/
+}
+
+#search_table
+{
+	margin-top: 30px;
+	margin-left: 15%;
+	margin-right: 2%;
+	font-size: 18px;
+	max-width: 95%;
+	width: 90%;
+	text-align: justify;
+	overflow-wrap: break-word;
+	white-space: normal;
+}
+
+#filter_div
+{
+	margin-top: 10px;
+	margin-bottom: 10px;
+	position: relative;
+    right: 0px;
+}
+
+
+#query_container
+{
+	margin: auto;
+	/*font-size: 12px;*/
+	width: 700px;
+	position: relative;
+    right: 0px;
+}
+
+/*.input-lg {*/
+	/*font-size: 150%;*/
+/*}*/
+
+/*.form-control {*/
+    /*background-color: #fff;*/
+    /*background-image: none;*/
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 4px;*/
+    /*box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;*/
+    /*color: #555;*/
+    /*display: block;*/
+    /*font-size: 14px;*/
+    /*height: 34px;*/
+    /*line-height: 1.42857;*/
+    /*padding: 6px 12px;*/
+    /*width: 100%;*/
+/*}*/
+
+#query_text
+{
+	font-size: 25px;
+}
+
+#footer_text
+{
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 1rem;
+	background-color: #efefef;
+	text-align: center;
+
+}
+
+td {
+	white-space: -o-pre-wrap;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+}
+
+.table-striped tbody tr.highlight td { 
+	background-color: rgba(80, 200, 180, 0.3);
+	word-wrap: break-word;
+	min-width: 160px;
+	max-width: 700px;
+}
+
+
+span.highlight
+{
+	background-color:yellow;
+}
+

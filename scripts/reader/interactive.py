@@ -13,7 +13,7 @@ import logging
 import prettytable
 import time
 
-from drqa.reader import Predictor
+from drqa.reader import Predictorr
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -49,8 +49,8 @@ if args.cuda:
 else:
     logger.info('Running on CPU only.')
 
-predictor = Predictor(args.model, args.tokenizer, num_workers=0,
-                      normalize=not args.no_normalize)
+predictor = Predictorr(args.model, args.tokenizer, num_workers=0,
+                       normalize=not args.no_normalize)
 if args.cuda:
     predictor.cuda()
 

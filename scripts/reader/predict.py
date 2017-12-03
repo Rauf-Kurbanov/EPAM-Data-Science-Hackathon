@@ -14,7 +14,7 @@ import logging
 import json
 
 from tqdm import tqdm
-from drqa.reader import Predictor
+from drqa.reader import Predictorr
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -59,7 +59,7 @@ if args.cuda:
 else:
     logger.info('Running on CPU only.')
 
-predictor = Predictor(
+predictor = Predictorr(
     args.model,
     args.tokenizer,
     args.embedding_file,

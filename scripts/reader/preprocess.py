@@ -17,6 +17,18 @@ from multiprocessing.util import Finalize
 from functools import partial
 from drqa import tokenizers
 
+import re
+import copy
+import warnings
+import pandas as pd
+
+from tqdm import tqdm
+from lazy import lazy
+from bs4 import BeautifulSoup
+from difflib import SequenceMatcher
+from IPython.core.display import HTML
+from sklearn.base import BaseEstimator, TransformerMixin
+
 # ------------------------------------------------------------------------------
 # Tokenize + annotate.
 # ------------------------------------------------------------------------------
@@ -120,7 +132,6 @@ def process_dataset(data, tokenizer, workers=None):
             'pos': pos,
             'ner': ner,
         }
-
 
 # -----------------------------------------------------------------------------
 # Commandline options
